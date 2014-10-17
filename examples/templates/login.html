@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container">
+            {% if email %}
+                <div class="alert alert-info" role="alert">Your login link has been sent to {{email}}</div>
+            {% endif %}
+            <form class="form-inline" role="form" method="post"> 
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon">@</div>
+                        <input class="form-control" id="email" name="email" type="email" value="foo@mailinator.com">
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Login or register</button>
+            </form>
+        </div>
+    </body>
+</html>
