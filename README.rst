@@ -12,12 +12,9 @@ flask-passwordless
         :target: https://crate.io/packages/flask-passwordless?version=latest
 
 
-Flask extension for passwordless login
+Flask extension for implementing passwordless login
+
+Inspired by https://passwordless.net/
 
 * Free software: BSD license
 * Documentation: http://flask-passwordless.rtfd.org.
-
-Features
---------
-
-* TODO
