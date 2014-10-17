@@ -1,6 +1,4 @@
-import functools
 import abc
-import mandrill
 
 
 class DeliveryMethod(object):
@@ -13,6 +11,7 @@ class DeliveryMethod(object):
 
 class DeliverByMandrill(DeliveryMethod):
     def __init__(self, config):
+        import mandrill
         config = config['MANDRILL']
         self.mandrill = mandrill.Mandrill(config.get('API_KEY'))
         self.from_email = config.get('FROM')
