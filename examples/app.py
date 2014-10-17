@@ -19,9 +19,7 @@ def login():
 
 @app.route('/authenticate', endpoint="authenticate")
 def authenticate():
-    token = flask.request.values['token']
-    uid = flask.request.values['uid']
-    if passwordless.authenticate(token, uid):
+    if passwordless.authenticate(flask.request):
         return "logged in"
     else:
         flask.abort(401)

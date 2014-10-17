@@ -1,30 +1,37 @@
+import functools
+import abc
 import mandrill
-from flask import url_for
 
 
 class DeliveryMethod(object):
-    def __call__(self, token, userid, **kwargs):
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def __call__(self, login_url, **kwargs):
         pass
 
 
 class DeliverByMandrill(DeliveryMethod):
     def __init__(self, config):
-        api_key = config.get('MANDRILL_API_KEY')
-        self.mandrill = mandrill.Mandrill(api_key)
+        config = config['MANDRILL']
+        self.mandrill = mandrill.Mandrill(config.get('API_KEY'))
+        self.from_email = config.get('FROM')
+        self.subject = config.get('SUBJECT')
 
-    def __call__(self, token, userid, email):
-        url = "".join([
-            'http://localhost:5000',
-            url_for('authenticate'),
-            "?token={}&uid={}".format(token, userid)
-        ])
+    def __call__(self, login_url, email):
         message = dict(
-            text=url,
-            from_email='flask-passwordless@example.com',
+            text="Here's your login url: {}".format(login_url),
+            from_email=self.from_email,
             to=[{
                 'email': email,
                 'type': 'to',
             }],
-            subject='Your login info',
+            subject=self.subject,
         )
+        # TODO: error handling
         self.mandrill.messages.send(message=message)
+
+
+DELIVERY_METHODS = {
+    'mandrill': DeliverByMandrill
+}
