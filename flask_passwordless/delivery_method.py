@@ -6,7 +6,7 @@ class DeliveryMethod(object):
 
     @abc.abstractmethod
     def __call__(self, login_url, **kwargs):
-        pass
+        return
 
 
 class DeliverByMandrill(DeliveryMethod):
