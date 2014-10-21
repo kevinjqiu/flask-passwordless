@@ -1,4 +1,5 @@
 import abc
+import mandrill
 
 
 class DeliveryMethod(object):
@@ -9,9 +10,12 @@ class DeliveryMethod(object):
         return
 
 
+class DeliveryError(StandardError):
+    pass
+
+
 class DeliverByMandrill(DeliveryMethod):
     def __init__(self, config):
-        import mandrill
         config = config['MANDRILL']
         self.mandrill = mandrill.Mandrill(config.get('API_KEY'))
         self.from_email = config.get('FROM')
@@ -27,8 +31,10 @@ class DeliverByMandrill(DeliveryMethod):
             }],
             subject=self.subject,
         )
-        # TODO: error handling
-        self.mandrill.messages.send(message=message)
+        try:
+            self.mandrill.messages.send(message=message)
+        except mandrill.Error as e:
+            raise DeliveryError(str(e))
 
 
 DELIVERY_METHODS = {
