@@ -36,7 +36,6 @@ class MemoryTokenStore(TokenStore):
 
 
 class RedisTokenStore(TokenStore):
-    STORE = {}
 
     def __init__(self, host):
         self.Redis = redis.StrictRedis(host=host)
