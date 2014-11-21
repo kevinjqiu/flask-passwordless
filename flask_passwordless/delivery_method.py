@@ -1,5 +1,6 @@
 import abc
 import mandrill
+import smtplib
 
 
 class DeliveryMethod(object):
@@ -12,6 +13,23 @@ class DeliveryMethod(object):
 
 class DeliveryError(StandardError):
     pass
+
+
+class DeliverByEmail(DeliveryMethod):
+    def __init__(self, server):
+        """send email"""
+        self.server = server
+
+    def __call__(self, token, toaddr):
+        """send the login token"""
+        from email.mime.text import MIMEText
+        msg = MIMEText(messagetext)
+        msg['Subject'] = 'Login Token Request For %s' % user
+        msg['From'] = 'operations@asti-usa.com'
+        msg['To'] = toaddrs
+        server = smtplib.SMTP(self.server)
+        server.sendmail(fromaddrs, toaddrs, msg.as_string())
+        server.quit()
 
 
 class DeliverByMandrill(DeliveryMethod):
