@@ -39,6 +39,7 @@ class MongoTokenStore(TokenStore):
 
     def __init__(self, config):
         self.db = MongoClient(config['url'])
+        self.origin = config['origin']
         self.ttl = config['ttl']
 
     def store_or_update(self, token, userid, ttl=None, origin=None):
@@ -46,8 +47,9 @@ class MongoTokenStore(TokenStore):
             return False
         if not userid:
             return False
-        if 'asti-usa.com' not in origin:
-            return False
+        if origin:
+            if origin != self.origin:
+                return False
         if not ttl:
             ttl = self.ttl
 
