@@ -1,4 +1,5 @@
 import abc
+from pymongo import MongoClient
 
 
 class TokenStore(object):
@@ -24,6 +25,32 @@ class MemoryTokenStore(TokenStore):
     STORE = {}
 
     def store_or_update(self, token, userid, ttl=600, origin=None):
+        self.STORE[userid] = token
+
+    def invalidate_token(self, userid):
+        del self.STORE[userid]
+
+    def get_by_userid(self, userid):
+        return self.STORE.get(userid, None)
+
+
+class MongoTokenStore(TokenStore):
+    STORE = {}
+
+    def __init__(self, config):
+        self.db = MongoClient(config['url'])
+        self.ttl = config['ttl']
+
+    def store_or_update(self, token, userid, ttl=None, origin=None):
+        if not token:
+            return False
+        if not userid:
+            return False
+        if 'asti-usa.com' not in origin:
+            return False
+        if not ttl:
+            ttl = self.ttl
+
         self.STORE[userid] = token
 
     def invalidate_token(self, userid):
