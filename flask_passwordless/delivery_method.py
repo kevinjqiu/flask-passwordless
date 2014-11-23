@@ -19,14 +19,15 @@ class DeliverByLog(DeliveryMethod):
         import logging
         import sys
         self.logs = logging.getLogger(__name__)
+        self.logs.setLevel(logging.DEBUG)
         log = logging.StreamHandler(sys.stdout)
         log.setLevel(logging.DEBUG)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         log.setFormatter(formatter)
         self.logs.addHandler(log)
 
-    def __call__(self, token, message):
-        logs.debug("Deliver: " + token + " " + message)
+    def __call__(self, token, email):
+        self.logs.debug("Deliver: " + token + " " + email)
 
 
 class DeliverBySMTP(DeliveryMethod):
