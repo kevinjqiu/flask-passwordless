@@ -12,6 +12,15 @@ class DeliveryMethod(object):
 class DeliveryError(StandardError):
     pass
 
+class DeliverByNull(DeliveryMethod):
+    def __init__(self):
+        """ just log that we tried to deliver. """
+        import logging
+        import sys
+        logs = logging.getLogger(__name__)
+        logging.basicConfig(filename=sys.stdout, level=logging.DEBUG)
+        
+
 
 class DeliverBySMTP(DeliveryMethod):
     def __init__(self, server):
@@ -57,5 +66,6 @@ class DeliverByMandrill(DeliveryMethod):
 
 DELIVERY_METHODS = {
     'mandrill': DeliverByMandrill,
-    'smtp': DeliverByEmail
+    'smtp': DeliverBySMTP,
+    'null': DeliverByNull
 }
