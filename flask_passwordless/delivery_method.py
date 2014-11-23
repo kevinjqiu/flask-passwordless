@@ -12,14 +12,17 @@ class DeliveryMethod(object):
 class DeliveryError(StandardError):
     pass
 
+
 class DeliverByNull(DeliveryMethod):
     def __init__(self):
         """ just log that we tried to deliver. """
         import logging
         import sys
-        logs = logging.getLogger(__name__)
+        self.logs = logging.getLogger(__name__)
         logging.basicConfig(filename=sys.stdout, level=logging.DEBUG)
-        
+
+    def __call__(self, token, message):
+        logs.debug("Deliver: " + token + " " + message)
 
 
 class DeliverBySMTP(DeliveryMethod):
