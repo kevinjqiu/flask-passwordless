@@ -43,3 +43,6 @@ output/*/index.html
 docs/_buildenv/
 examples/settings.py
 .ropeproject/
+
+# IDE droppings
+.idea
