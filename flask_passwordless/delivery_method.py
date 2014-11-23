@@ -13,13 +13,17 @@ class DeliveryError(StandardError):
     pass
 
 
-class DeliverByNull(DeliveryMethod):
+class DeliverByLog(DeliveryMethod):
     def __init__(self, config):
         """ just log that we tried to deliver. """
         import logging
         import sys
         self.logs = logging.getLogger(__name__)
-        logging.basicConfig(filename=sys.stdout, level=logging.DEBUG)
+        log = logging.StreamHandler(sys.stdout)
+        log.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        log.setFormatter(formatter)
+        self.logs.addHandler(log)
 
     def __call__(self, token, message):
         logs.debug("Deliver: " + token + " " + message)
