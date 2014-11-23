@@ -75,7 +75,7 @@ class DeliverByNull(DeliveryMethod):
     def __init__(self, config):
         pass
         
-    def __call__(self, *args):
+    def __call__(self, token, email):
         pass
     
 
