@@ -71,8 +71,17 @@ class DeliverByMandrill(DeliveryMethod):
             raise DeliveryError(str(e))
 
 
+class DeliverByNull(DeliveryMethod):
+    def __init__(self, config):
+        pass
+        
+    def __call__(self, *args):
+        pass
+    
+
 DELIVERY_METHODS = {
     'mandrill': DeliverByMandrill,
     'smtp': DeliverBySMTP,
+    'log': DeliverByLog,
     'null': DeliverByNull
 }
