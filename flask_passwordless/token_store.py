@@ -84,5 +84,7 @@ class MongoTokenStore(TokenStore):
 
 
 TOKEN_STORES = {
-    'memory': MemoryTokenStore
+    'memory': MemoryTokenStore,
+    'redis': RedisTokenStore,
+    'mongo': MongoTokenStore
 }
