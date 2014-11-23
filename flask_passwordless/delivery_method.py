@@ -13,7 +13,7 @@ class DeliveryError(StandardError):
     pass
 
 
-class DeliverByEmail(DeliveryMethod):
+class DeliverBySMTP(DeliveryMethod):
     def __init__(self, server):
         """send by smtp"""
         import smtplib
@@ -56,5 +56,6 @@ class DeliverByMandrill(DeliveryMethod):
 
 
 DELIVERY_METHODS = {
-    'mandrill': DeliverByMandrill
+    'mandrill': DeliverByMandrill,
+    'smtp': DeliverByEmail
 }
