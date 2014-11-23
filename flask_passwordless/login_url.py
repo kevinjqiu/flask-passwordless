@@ -1,5 +1,4 @@
 import abc
-from flask import url_for
 
 
 class LoginURL(object):
@@ -19,6 +18,7 @@ class LoginURL(object):
 
 class PlainLoginURL(LoginURL):
     def generate(self, token, userid):
+        from flask import url_for
         return "".join([
             url_for('authenticate', _external=True),
             "?token={}&uid={}".format(token, userid)

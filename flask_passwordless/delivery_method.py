@@ -1,6 +1,4 @@
 import abc
-import mandrill
-import smtplib
 
 
 class DeliveryMethod(object):
@@ -17,7 +15,8 @@ class DeliveryError(StandardError):
 
 class DeliverByEmail(DeliveryMethod):
     def __init__(self, server):
-        """send email"""
+        """send by smtp"""
+        import smtplib
         self.server = server
 
     def __call__(self, token, toaddr):
@@ -34,6 +33,7 @@ class DeliverByEmail(DeliveryMethod):
 
 class DeliverByMandrill(DeliveryMethod):
     def __init__(self, config):
+        import mandrill
         config = config['MANDRILL']
         self.mandrill = mandrill.Mandrill(config.get('API_KEY'))
         self.from_email = config.get('FROM')
