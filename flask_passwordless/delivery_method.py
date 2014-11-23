@@ -14,7 +14,7 @@ class DeliveryError(StandardError):
 
 
 class DeliverByNull(DeliveryMethod):
-    def __init__(self):
+    def __init__(self, config):
         """ just log that we tried to deliver. """
         import logging
         import sys
