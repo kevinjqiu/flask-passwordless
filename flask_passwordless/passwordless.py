@@ -14,7 +14,11 @@ class Passwordless(object):
         config = app.config['PASSWORDLESS']
         token_store = config['TOKEN_STORE']
         self.token_store = TOKEN_STORES[token_store](app.config)
-
+        # does the token expire after a single login session? ie is it bookmarkable
+        if 'SINGLE_USE' in config:
+            self.single_use = config['SINGLE_USE']
+        else:
+            self.single_use = True
         delivery_method = config['DELIVERY_METHOD']
         self.delivery_method = DELIVERY_METHODS[delivery_method](app.config)
 
@@ -33,6 +37,7 @@ class Passwordless(object):
         token, uid = self.login_url.parse(flask_request)
         is_authenticated = self.token_store.get_by_userid(uid) == token
         if is_authenticated:
-            self.token_store.invalidate_token(uid)
+            if self.single_use:
+                self.token_store.invalidate_token(uid)
 
         return is_authenticated
