@@ -34,18 +34,26 @@ class DeliverBySMTP(DeliveryMethod):
     def __init__(self, server):
         """send by smtp"""
         import smtplib
-        self.server = server
+        self.servername = server
+        self.server = smtplib.SMTP(server)
+        self.messagetext = ""
+
+    def set_message(self, message):
+        self.messagetext = message
 
     def __call__(self, token, toaddr):
         """send the login token"""
         from email.mime.text import MIMEText
-        msg = MIMEText(messagetext)
-        msg['Subject'] = 'Login Token Request For %s' % user
+        fromaddrs = "tokenrequest@" + self.servername
+        msg = MIMEText(self.messagetext)
+        msg['Subject'] = 'Login Token Request For %s' % toaddr
         msg['From'] = 'operations@asti-usa.com'
-        msg['To'] = toaddrs
-        server = smtplib.SMTP(self.server)
-        server.sendmail(fromaddrs, toaddrs, msg.as_string())
-        server.quit()
+        msg['To'] = toaddr
+        try:
+            self.server.sendmail(fromaddrs, toaddr, msg.as_string())
+            self.server.quit()
+        except:
+            print "You done goofed, can't send"
 
 
 class DeliverByMandrill(DeliveryMethod):
@@ -63,7 +71,7 @@ class DeliverByMandrill(DeliveryMethod):
             to=[{
                 'email': email,
                 'type': 'to',
-            }],
+                }],
             subject=self.subject,
         )
         try:
@@ -75,10 +83,10 @@ class DeliverByMandrill(DeliveryMethod):
 class DeliverByNull(DeliveryMethod):
     def __init__(self, config):
         pass
-        
+
     def __call__(self, token, email):
         pass
-    
+
 
 DELIVERY_METHODS = {
     'mandrill': DeliverByMandrill,
