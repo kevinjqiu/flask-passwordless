@@ -1,5 +1,5 @@
 import abc
-
+from templates import MessageTemplate
 
 class DeliveryMethod(object):
     __metaclass__ = abc.ABCMeta
@@ -30,24 +30,28 @@ class DeliverByLog(DeliveryMethod):
         self.logs.debug("Deliver: " + token + " " + email)
 
 
+# TODO: This needs to use Jinja2 templates
 class DeliverBySMTP(DeliveryMethod):
-    def __init__(self, server):
+    def __init__(self, config):
         """send by smtp"""
         import smtplib
-        self.servername = server
-        self.server = smtplib.SMTP(server)
-        self.messagetext = ""
-
-    def set_message(self, message):
-        self.messagetext = message
+        config = config['SMTP']
+        self.servername = config.get('SERVER')
+        self.template_path = config.get('TEMPLATE_PATH')
+        self.from_email = config.get('FROM_EMAIL')
+        self.msg_subject = config.get('MESSAGE_SUBJECT')
+        self.server = smtplib.SMTP(self.servername)
+        self.message_template = MessageTemplate(config)
 
     def __call__(self, token, toaddr):
         """send the login token"""
         from email.mime.text import MIMEText
-        fromaddrs = "tokenrequest@" + self.servername
-        msg = MIMEText(self.messagetext)
-        msg['Subject'] = 'Login Token Request For %s' % toaddr
-        msg['From'] = 'operations@asti-usa.com'
+        fromaddrs = self.from_email
+        messagetext = self.message_template(token=token)
+        msg = MIMEText(messagetext)
+        msg['Subject'] = self.msg_subject  # TODO I think this should be a template string too?
+        # msg['Subject'] = 'Login Token Request For %s' % toaddr
+        msg['From'] = self.from_email
         msg['To'] = toaddr
         try:
             self.server.sendmail(fromaddrs, toaddr, msg.as_string())
