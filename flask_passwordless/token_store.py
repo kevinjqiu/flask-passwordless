@@ -38,11 +38,11 @@ class RedisTokenStore(TokenStore):
     def __init__(self, host, tokenspace):
         import redis
         if not host:
-            self.host = localhost
+            self.host = "localhost"
         if not tokenspace:
             self.tokenspace = 'logintokens'
         self.Redis = redis.StrictRedis(host=host)
-        
+
     def store_or_update(self, token, userid, ttl=600, origin=None):
         # set TTL on key?
         self.Redis.hset(self.tokenspace, userid, token)

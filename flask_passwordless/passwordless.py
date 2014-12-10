@@ -3,6 +3,7 @@ from .token_store import TOKEN_STORES
 from .login_url import LOGIN_URLS
 from .delivery_methods import DELIVERY_METHODS
 
+
 class Passwordless(object):
     def __init__(self, app=None):
         self.app = app
