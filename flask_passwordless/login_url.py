@@ -21,7 +21,7 @@ class PlainLoginURL(LoginURL):
         from flask import url_for
         return "".join([
             url_for('authenticate', _external=True),
-            "?token={}&uid={}".format(token, userid)
+            "?token=" + token + "&uid=" + userid
         ])
 
     def parse(self, request):
