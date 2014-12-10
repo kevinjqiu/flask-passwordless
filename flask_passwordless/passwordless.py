@@ -1,14 +1,14 @@
 import uuid
-from .delivery_method import DELIVERY_METHODS
 from .token_store import TOKEN_STORES
 from .login_url import LOGIN_URLS
-
+from .delivery_methods import DELIVERY_METHODS
 
 class Passwordless(object):
     def __init__(self, app=None):
         self.app = app
         if app is not None:
             self.init_app(app)
+        self.single_use = False
 
     def init_app(self, app):
         config = app.config['PASSWORDLESS']
