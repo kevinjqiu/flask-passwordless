@@ -59,7 +59,7 @@ class DeliverByMandrill(DeliveryMethod):
             to=[{
                 'email': email,
                 'type': 'to',
-                }],
+            }],
             subject=self.subject,
         )
         try:
@@ -78,7 +78,7 @@ class DeliverBySMTP(DeliveryMethod):
         """send the login token"""
         self.from_email = self.config.get('FROM_EMAIL')
         self.msg_subject = self.config.get('MESSAGE_SUBJECT')
-        self.server = smtplib.SMTP(self.config.get('SERVER'))
+        self.server = smtplib.SMTP()
         self.message_template = MessageTemplate(self.tmpl_config)
         fromaddrs = self.from_email
         messagetext = self.message_template(token=token)
@@ -88,10 +88,23 @@ class DeliverBySMTP(DeliveryMethod):
         msg['From'] = self.from_email
         msg['To'] = target_email
         try:
+            self.server.connect(self.config.get('SERVER'))
             self.server.sendmail(fromaddrs, target_email, msg.as_string())
             self.server.quit()
+        except smtplib.SMTPRecipientsRefused as e:
+            print "recipients refused"
+            print e
+        except smtplib.SMTPException as aa:
+            print "generic exception"
+            print aa
+        except smtplib.SMTPDataError as de:
+            print "data error"
+            print de
+        except smtplib.SMTPConnectError as ce:
+            print "connect error"
+            print "ce"
         except:
-            print "You done goofed, can't send"
+            print "wat"
 
 
 DELIVERY_METHODS = {
