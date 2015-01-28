@@ -102,7 +102,7 @@ class DeliverBySMTP(DeliveryMethod):
             print de
         except smtplib.SMTPConnectError as ce:
             print "connect error"
-            print "ce"
+            print ce
         except:
             print "wat"
 
