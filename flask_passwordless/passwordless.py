@@ -14,7 +14,7 @@ class Passwordless(object):
     def init_app(self, app):
         config = app.config['PASSWORDLESS']
         token_store = config['TOKEN_STORE']
-        self.token_store = TOKEN_STORES[token_store](app.config)
+        self.token_store = TOKEN_STORES[token_store](config)
         # does the token expire after a single login session? ie is it bookmarkable
         if 'SINGLE_USE' in config:
             self.single_use = config['SINGLE_USE']
