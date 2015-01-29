@@ -1,7 +1,7 @@
 import uuid
-from .delivery_method import DELIVERY_METHODS
 from .token_store import TOKEN_STORES
 from .login_url import LOGIN_URLS
+from .delivery_methods import DELIVERY_METHODS
 
 
 class Passwordless(object):
@@ -9,11 +9,14 @@ class Passwordless(object):
         self.app = app
         if app is not None:
             self.init_app(app)
+        self.single_use = False
 
     def init_app(self, app):
         config = app.config['PASSWORDLESS']
         token_store = config['TOKEN_STORE']
-        self.token_store = TOKEN_STORES[token_store](app.config)
+        self.token_store = TOKEN_STORES[token_store](config)
+        # does the token expire after a single login session? ie is it bookmarkable
+        self.single_use = config.get('SINGLE_USE', True)
 
         delivery_method = config['DELIVERY_METHOD']
         self.delivery_method = DELIVERY_METHODS[delivery_method](app.config)
@@ -32,7 +35,7 @@ class Passwordless(object):
     def authenticate(self, flask_request):
         token, uid = self.login_url.parse(flask_request)
         is_authenticated = self.token_store.get_by_userid(uid) == token
-        if is_authenticated:
+        if is_authenticated and self.single_use:
             self.token_store.invalidate_token(uid)
 
         return is_authenticated
