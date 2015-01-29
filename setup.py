@@ -19,7 +19,7 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 setup(
     name='flask-passwordless',
-    version='0.1.0',
+    version='0.1.1',
     description='Flask extension for passwordless login',
     long_description=readme + '\n\n' + history,
     author='Kevin Qiu',
