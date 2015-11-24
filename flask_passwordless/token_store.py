@@ -35,16 +35,20 @@ class MemoryTokenStore(TokenStore):
 
 class RedisTokenStore(TokenStore):
 
-    def __init__(self, host, tokenspace):
+    def __init__(self, config):
         import redis
-        if not host:
+        if not config['redishost']:
             self.host = "localhost"
-        if not tokenspace:
+        else:
+            self.host = config['redishost']
+        if not config['tokenspace']:
             self.tokenspace = 'logintokens'
-        self.Redis = redis.StrictRedis(host=host)
+        else:
+            self.tokenspace = config['tokenspace']
+        # TODO: alternate port or parse redishost to include the port
+        self.Redis = redis.StrictRedis(host=self.host)
 
-    def store_or_update(self, token, userid, ttl=600, origin=None):
-        # set TTL on key?
+    def store_or_update(self, token, userid, ttl=86400, origin=None):
         self.Redis.hset(self.tokenspace, userid, token)
         self.Redis.expire(self.tokenspace, ttl)
 
@@ -52,7 +56,7 @@ class RedisTokenStore(TokenStore):
         self.Redis.hdel(self.tokenspace, userid)
 
     def get_by_userid(self, userid):
-        return self.Redis.hget(self.tokenspace, userid, None)
+        return self.Redis.hget(self.tokenspace, userid)
 
 
 class MongoTokenStore(TokenStore):

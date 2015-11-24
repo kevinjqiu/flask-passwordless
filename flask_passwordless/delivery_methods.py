@@ -107,6 +107,11 @@ class DeliverBySMTP(DeliveryMethod):
             print "wat"
 
 
+class DeliverBySES(DeliveryMethod):
+    def __init__(self, config):
+        pass
+
+
 DELIVERY_METHODS = {
     'mandrill': DeliverByMandrill,
     'smtp': DeliverBySMTP,
