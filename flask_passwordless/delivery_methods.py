@@ -5,6 +5,10 @@ try:
     import mandrill
 except ImportError:
     pass
+try:
+    import boto.ses
+except ImportError:
+    pass
 from templates import MessageTemplate
 import smtplib
 from email.mime.text import MIMEText
@@ -19,6 +23,10 @@ class DeliveryMethod(object):
 
 
 class DeliveryError(StandardError):
+    pass
+
+
+class ConfigurationError(StandardError):
     pass
 
 
@@ -109,7 +117,34 @@ class DeliverBySMTP(DeliveryMethod):
 
 class DeliverBySES(DeliveryMethod):
     def __init__(self, config):
-        pass
+        # TODO: this can also use the env instead of a config file for keys+id
+        if "AWS_ACCESS_KEY_ID" not in config:
+            raise ConfigurationError("You must have an AWS ACCESS KEY in the config.")
+        if "AWS_SECRET_ACCESS_KEY" not in config:
+            raise ConfigurationError("You must have an AWS SECRET ACCESS KEY in the config.")
+        self.config = config
+        self.conn = boto.ses.connect_to_region(
+            'us-west-2',
+            aws_access_key_id=config['AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=config['AWS_SECRET_ACCESS_KEY'])
+
+    def __call__(self, token, email):
+        """send the login token"""
+        self.from_email = self.config.get('FROM_EMAIL')
+        self.msg_subject = self.config.get('MESSAGE_SUBJECT')
+        self.message_template = MessageTemplate(self.tmpl_config)
+        fromaddrs = self.from_email
+        messagetext = self.message_template(token=token)
+        target_email = email + '@' + self.config.get('OK_DOMAIN')
+        msg = MIMEText(messagetext, 'html')
+        msg['Subject'] = self.msg_subject
+        msg['From'] = self.from_email
+        msg['To'] = target_email
+        self.conn.send_email(
+            self.from_email,
+            self.msg_subject,
+            msg,
+            [target_email])
 
 
 DELIVERY_METHODS = {
