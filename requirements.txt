@@ -1,4 +1,4 @@
 mandrill==1.0.57
-Jinja2==2.7.2
+Jinja2==2.11.3
 redis==2.9.1
 pymongo==2.7
